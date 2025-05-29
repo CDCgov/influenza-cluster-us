@@ -1,0 +1,1 @@
+https://www.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
