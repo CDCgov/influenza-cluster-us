@@ -16,10 +16,10 @@ plot_processed_data <- function(df_data, plotting = T) {
     p <- df_data %>%
       filter(DATA_TYPE == datatype) %>%
       ggplot() +
-      geom_line(aes(x = DATE, y = MAIN),        col = "black") +
-      geom_line(aes(x = DATE, y = MAIN_SMOOTH), col = "red") +
-      scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-      facet_wrap(NAME_FULL ~ ., scales = "free_y") +
+      geom_line(aes(x = DATE, y = MAIN_SMOOTH), linewidth = 1.0, col = "red") +
+      geom_point(aes(x = DATE, y = MAIN),       size = 0.1,      col = "black") +
+      scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%b %Y") +
+      facet_wrap(NAME_FULL ~ ., ncol = 6, scales = "free_y") +
       labs(title = name_datatype,
            x = "Date",
            y = "Weekly value") +
@@ -52,21 +52,25 @@ plot_processed_data <- function(df_data, plotting = T) {
     if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16, height = 9, type = "cairo")
   }
   
-  # load files
-  print( file_names <- list.files(path = "figure-temp", pattern = "figure2a-.*-tile-smooth\\.png$", full.names = TRUE) )
-  # check file existence
-  file_names <- file_names[file.exists(file_names)]
-  # all figures
-  rl = lapply(file_names, png::readPNG)
-  gl = lapply(rl, grid::rasterGrob)
-  # plot
-  p = cowplot::plot_grid(plotlist = gl,
-                         nrow = 2,
-                         # labels = "AUTO",
-                         hjust = 0,
-                         label_size = 28, label_fontface = "plain",
-                         align = "hv", axis = "b")
-  # save figure
-  print( name_plot <- paste0("figure-temp/", "figure2a-", "tile-smooth", ".png") )
-  if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16, height = 9*2, type = "cairo")
+  for(figtype in c("line",
+                   "tile")
+  ) {
+    # load files
+    print( file_names <- list.files(path = "figure-temp", pattern = paste0("figure2a-.*-", figtype, "-smooth\\.png$"), full.names = TRUE) )
+    # check file existence
+    file_names <- file_names[file.exists(file_names)]
+    # all figures
+    rl = lapply(file_names, png::readPNG)
+    gl = lapply(rl, grid::rasterGrob)
+    # plot
+    p = cowplot::plot_grid(plotlist = gl,
+                           nrow = 2,
+                           # labels = "AUTO",
+                           hjust = 0,
+                           label_size = 28, label_fontface = "plain",
+                           align = "hv", axis = "b")
+    # save figure
+    print( name_plot <- paste0("figure-temp/", "figure2a-", figtype, "-smooth", ".png") )
+    if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16, height = 9*2, type = "cairo")
+  }
 }

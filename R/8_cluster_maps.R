@@ -1,6 +1,6 @@
 cluster_maps <- function(df_subset, plotting = T) {
   ## combine png ###############################################################
-  combine_pngs <- function(df_subset_select, target = "cluster", nrow = 1) {
+  combine_pngs <- function(df_subset_select, target = "cluster", ncol = 1) {
     # subset of data
     datatypes    <- as.character(df_subset_select$DATA_TYPE)
     periods      <- as.character(df_subset_select$DATA_PERIOD)
@@ -18,9 +18,12 @@ cluster_maps <- function(df_subset, plotting = T) {
     # all figures
     rl = lapply(file_names, png::readPNG)
     gl = lapply(rl, grid::rasterGrob)
+    # reorder for multiple seasons
+    if(!grepl("season", periods[1]))
+      gl = gl[as.vector(t(matrix(seq_len(length(gl)), ncol = ncol)))[1:length(gl)]]
     # plot
     p = cowplot::plot_grid(plotlist = gl,
-                           nrow = nrow,
+                           ncol = ncol,
                            # labels = "AUTO",
                            hjust = 0,
                            label_size = 28, label_fontface = "plain",
@@ -46,10 +49,17 @@ cluster_maps <- function(df_subset, plotting = T) {
         filter(AVG == TRUE)
       
       # combine png
-      p <- combine_pngs(df_subset_select, target, nrow = 3)
+      p <- combine_pngs(df_subset_select, target, ncol = 3)
+      # rename
+      source("name_variable.R")
+      name_datatype <- name_variable(datatype, NA, NA)$name_datatype
+      # add title
+      p <- cowplot::ggdraw() +
+        cowplot::draw_label(name_datatype, x = 0.01, y = 0.98, hjust = 0, size = 36) +
+        cowplot::draw_plot(p, y = 0, height = 0.97)
       # save figure
       print( name_plot <- paste0("figure-temp/", "figure8-", datatype, "-", "full_period", "-mean", "TRUE", "-", target, "-map", ".png") )
-      if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16/2*5, height = 9/2*3, type = "cairo")
+      if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14/2*3, height = 9/2*5, type = "cairo")
       
       # ## preCOVID19 ##################################################################
       # # subset of data
@@ -60,10 +70,10 @@ cluster_maps <- function(df_subset, plotting = T) {
       #   filter(DATA_YEAR0 < 2020)
       #
       # # combine png
-      # p <- combine_pngs(df_subset_select, target, nrow = 2)
+      # p <- combine_pngs(df_subset_select, target, ncol = 2)
       # # save figure
       # print( name_plot <- paste0("figure-temp/", "figure8-", datatype, "-", "preCOVID19", "-mean", "TRUE", "-", target, "-map", ".png") )
-      # if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16/2*5, height = 9/2*2, type = "cairo")
+      # if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14/2*5, height = 9/2*2, type = "cairo")
       #
       # ## COVID19era #################################################################
       # # subset of data
@@ -74,10 +84,10 @@ cluster_maps <- function(df_subset, plotting = T) {
       #   filter(DATA_YEAR0 >= 2020)
       #
       # # combine png
-      # p <- combine_pngs(df_subset_select, target, nrow = 1)
+      # p <- combine_pngs(df_subset_select, target, ncol = 1)
       # # save figure
       # print( name_plot <- paste0("figure-temp/", "figure8-", datatype, "-", "COVID19era", "-mean", "TRUE", "-", target, "-map", ".png") )
-      # if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16/2*4, height = 9/2*1, type = "cairo")
+      # if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14/2*4, height = 9/2*1, type = "cairo")
     }
     
     ## multiple seasons ##########################################################
@@ -94,13 +104,13 @@ cluster_maps <- function(df_subset, plotting = T) {
         filter(AVG == averaging)
       
       # combine png
-      p <- combine_pngs(df_subset_select, target, nrow = 2)
+      p <- combine_pngs(df_subset_select, target, ncol = 2)
       # save figure
       print( name_plot <- paste0("figure-temp/", "figure8-", "all_datatypes", "-", "full_period", "-mean", averaging, "-", target, "-map", ".png") )
       if(target %in% c("peak", "moran_local"))
-        if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16*2, height = 9*2, type = "cairo")
+        if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14*2, height = 9*2, type = "cairo")
       if(target == "cluster")
-        if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16*3, height = 9*2, type = "cairo")
+        if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14*2, height = 9*3, type = "cairo")
     }
   }
 }

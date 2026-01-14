@@ -87,8 +87,8 @@ data_raw <- function(datatype = "ILINet", plotting = T) {
   p <- df_main %>%
     ggplot(aes(x = DATE, y = MAIN)) +
     geom_line() +
-    scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-    facet_wrap(NAME_FULL ~ ., scales = "free_y") +
+    scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%b %Y") +
+    facet_wrap(NAME_FULL ~ ., ncol = 6, scales = "free_y") +
     labs(x = "Date",
          y = "Weekly value") +
     theme_bw(base_size = 12) +

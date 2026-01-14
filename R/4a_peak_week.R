@@ -37,18 +37,31 @@ peak_week <- function(df_list, datatype = "ILINet", period = "preCOVID19_2010_20
     theme_void()
   # map title
   source("name_variable.R")
-  name_map_title <- name_variable(datatype, period, averaging)$name_map_title
+  name_variables <- name_variable(datatype, period, averaging)
+  name_datatype  <- name_variables$name_datatype
+  name_period    <- name_variables$name_period
+  name_averaging <- name_variables$name_averaging
+  name_map_title <- name_variables$name_map_title
   # custom map
-  p <- fig_map(p0, shapefile_FULL) +
+  if(!grepl("season", period)) # multiple seasons
+    p <- fig_map(p0, shapefile_FULL) +
     labs(title = name_map_title,
          fill = "Peak week") +
     guides(fill = guide_colorbar(barwidth = 1, barheight = 35)) +
     theme(plot.title = element_text(size = rel(3)),
-          legend.title = element_text(size = rel(2)),
+          legend.title = element_text(size = rel(3)),
+          legend.text = element_text(size = rel(2)))
+  if(grepl("season", period)) # single seasons
+    p <- fig_map(p0, shapefile_FULL) +
+    labs(title = name_period,
+         fill = "Peak week") +
+    guides(fill = guide_colorbar(barwidth = 1, barheight = 35)) +
+    theme(plot.title = element_text(size = rel(5)),
+          legend.title = element_text(size = rel(3)),
           legend.text = element_text(size = rel(2)))
   # save figure
   print( name_plot <- paste0("figure-temp/", "figure4a-", datatype, "-", period, "-mean", averaging, "-peak-map", ".png") )
-  if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 16, height = 9, type = "cairo")
+  if(plotting) ggplot2::ggsave(file = name_plot, plot = p, width = 14, height = 9, type = "cairo")
   
   return(df_peak)
 }

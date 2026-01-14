@@ -81,10 +81,10 @@ data_process <- function(df_main, threshold = 0.5, plotting = T) {
   # plot time series
   p <- df_main %>%
     ggplot() +
-    geom_line(aes(x = DATE, y = MAIN),        col = "black") +
-    geom_line(aes(x = DATE, y = MAIN_SMOOTH), col = "red") +
-    scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-    facet_wrap(NAME_FULL ~ ., scales = "free_y") +
+    geom_line(aes(x = DATE, y = MAIN_SMOOTH), linewidth = 1.0, col = "red") +
+    geom_point(aes(x = DATE, y = MAIN),       size = 0.1,      col = "black") +
+    scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%b %Y") +
+    facet_wrap(NAME_FULL ~ ., ncol = 6, scales = "free_y") +
     labs(x = "Date",
          y = "Weekly value") +
     theme_bw(base_size = 12) +
