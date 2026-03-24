@@ -5,7 +5,7 @@
 
 ## Overview
 
-This repository contains the code required to reproduce the results from the study [Chan et al. 2024](https://doi.org/10.1101/2025.05.28.25328505).
+This repository contains the code required to reproduce the results from the study [Chan et al. 2026](https://doi.org/10.1186/s12879-026-13000-7).
 
 For this demonstration, we analyze data from the 2010/2011 to 2023/2024 seasons. This analysis generates results for two main phases: the pre-COVID-19 period (2010/2011–2019/2020) and the post-COVID-19 period (2022/2023–2023/2024), as well as for 14 individual seasons.
 
